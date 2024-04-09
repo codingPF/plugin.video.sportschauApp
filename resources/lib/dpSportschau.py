@@ -19,7 +19,7 @@ class DpSportschau(object):
     RefreshArdAudiothek
     """
 
-    def __init__(self, pAbortHook, pProfilePath, pAddon):
+    def __init__(self, pAddon):
         self._addon = pAddon
         self.logger = pAddon.createLogger('DpSportschau')
         self.abortHook = pAddon.getAbortHook()

@@ -30,14 +30,14 @@ class Main(Kodi):
         if mode == 'A':
             mmUI = KodiUI.KodiUI(self)
             href = self.getParameters('urlB64')
-            self.genSub(mmUI, dps.DpSportschau(self.getAbortHook(), self.getAddonDataPath(), self).getSub(pyUtils.b64decode(href)))
+            self.genSub(mmUI, dps.DpSportschau(self).getSub(pyUtils.b64decode(href)))
         elif mode == 'B':
             mmUI = KodiUI.KodiUI(self)
             href = self.getParameters('urlB64')
-            self.genSub(mmUI, dps.DpSportschau(self.getAbortHook(), self.getAddonDataPath(), self).getPage(pyUtils.b64decode(href)))
+            self.genSub(mmUI, dps.DpSportschau(self).getPage(pyUtils.b64decode(href)))
         else:
             mmUI = KodiUI.KodiUI(self)
-            self.genMenu(mmUI, dps.DpSportschau(self.getAbortHook(), self.getAddonDataPath(), self).getRoot())
+            self.genMenu(mmUI, dps.DpSportschau(self).getRoot())
         
 
     ##########
