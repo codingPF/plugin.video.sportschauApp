@@ -9,6 +9,7 @@ import xbmc
 import xbmcvfs
 import xbmcgui
 import xbmcplugin
+import xbmcaddon
 try:
     # Python 3.x
     from urllib.parse import urlencode
@@ -18,22 +19,44 @@ except ImportError:
     from urllib import urlencode
     from urlparse import parse_qs
 
-from resources.lib.appContext import AppContext
+from resources.lib.singleton import Singleton
+from resources.lib.logger import Logger
 import resources.lib.utils as pyUtils
+import resources.lib.kodiProgressDialog as PG
 
-
-class Kodi(object):
+class Kodi(Singleton):
 
     def __init__(self):
-        self.logger = AppContext().LOGGER.getInstance('Kodi')
-        self.addon = AppContext().ADDONCLASS
+        self._addonClass = xbmcaddon.Addon()
         self._addonUrl = sys.argv[0]
-        self._addonPath = pyUtils.py2_decode(self.addon.getAddonInfo('path'))
-        self.addon_handle = int(sys.argv[1])
+        self._addon_handle = int(sys.argv[1])
         self._parameter = parse_qs(sys.argv[2][1:])
-        self._localizeString = self.addon.getLocalizedString
-        self._addonDataPath = self.translatePath(self.addon.getAddonInfo('profile'))
+        self.log = Logger(self._addonClass.getAddonInfo('id'), self._addonClass.getAddonInfo('version'), 'Kodi')
+        self._progressDialog = PG.KodiProgressDialog(self)
+        self._localizeString = self._addonClass.getLocalizedString
+        # we do store last access for later use
+        import time
+        self._lastUsed = self.getSetting("LastUsed", 0)
+        self.setSetting("LastUsed", str(int(time.time())));
 
+    ## Wrap settings
+    def setSetting(self, setting_id, value):
+        return self._addonClass.setSetting(setting_id, value)
+
+    def getSetting(self, setting_id, defaultValue=None):
+        value = pyUtils.py2_decode(self._addonClass.getSetting(setting_id))
+        if value is None and defaultValue is not None:
+            return defaultValue
+        return value
+
+    ## General Plugin info
+    def getAddonDataPath(self):
+        return self.translatePath(self._addonClass.getAddonInfo('profile'))
+
+    def getAddonPath(self):
+        return pyUtils.py2_decode(self._addonClass.getAddonInfo('path'))
+    
+    ## kodi helper
     def getKodiVersion(self):
         """
         Get Kodi major version
@@ -55,23 +78,25 @@ class Kodi(object):
         if rt == '':
             rt = str(pParam)
         return rt
+    
+    def getAddonHandle(self):
+        return self._addon_handle
+    
+    ## wrappers
+    def createLogger(self, topic=None):
+        return self.log.getInstance(topic)
+    
+    def getProgressDialog(self):
+        return self._progressDialog
 
-    def getAddonDataPath(self):
-        return self._addonDataPath
-
-    def getAddonPath(self):
-        return self._addonPath
-
+    def executebuiltin(self, builtin):
+        xbmc.executebuiltin(builtin)
+    
+    def getAbortHook(self):
+        return xbmc.Monitor().abortRequested
+    
+    ## Other wrappers
     def getParameters(self, pName=None, default=None):
-        """
-        Get one specific parameter passed to the plugin
-
-        Args:
-            argname(str): the name of the parameter
-
-            default(str): the value to return if no such
-                parameter was specified
-        """
         if pName == None:
             return self._parameter
         try:
@@ -109,16 +134,7 @@ class Kodi(object):
         if pSubTitle is not None:
             listitem.setSubtitles(pSubTitle)
 
-        xbmcplugin.setResolvedUrl(self.addon_handle, True, listitem)
-
-    def executebuiltin(self, builtin):
-        xbmc.executebuiltin(builtin)
-
-    def setSetting(self, setting_id, value):
-        return self.addon.setSetting(setting_id, value)
-
-    def getAbortHook(self):
-        return xbmc.Monitor().abortRequested
+        xbmcplugin.setResolvedUrl(self._addon_handle, True, listitem)
 
     def getSkinName(self):
         return xbmc.getSkinDir();

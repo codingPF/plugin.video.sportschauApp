@@ -90,6 +90,7 @@ def epoch_from_timestamp(pTimestampString, pTsPatter='%Y-%m-%dT%H:%M:%S.%f%z'):
         new_time = datetime.datetime.strptime(pTimestampString, pTsPatter)
         rs = int(new_time.timestamp())
     except TypeError:
+        # TypeError bug in python
         new_time = time.mktime(time.strptime(pTimestampString, pTsPatter))
         rs = int(new_time)
     return rs
@@ -200,6 +201,8 @@ def file_cleanupname(val):
     cStr = re.sub(r'(?u)[^-\w.]', '', cStr)
     return cStr
 
+#########################################################################################
+
 def extractJsonValue(rootElement, *args):
     if rootElement is None:
         return None
@@ -218,9 +221,6 @@ def extractJsonValue(rootElement, *args):
                 return None
     return root;
     
-#########################################################################################
-
-
 def loadJson(filename):
     with closing(open(filename, encoding='utf-8')) as json_file:
         data = json.load(json_file)

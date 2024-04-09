@@ -9,23 +9,12 @@ import xbmc
 
 
 class Logger(object):
-    """
-    The logger base class
 
-    Args:
-        name(str): Name of the logger
-
-        version(str): Version string of the application
-
-        topic(str, optional): Topic string displayed in messages
-            from this logger. Default is `None`
-    """
-
-    def __init__(self, name, version, topic=None):
-        self.name = name
-        self.version = version
+    def __init__(self, pPluginName, pVersion, pClass=None):
+        self.name = pPluginName
+        self.version = pVersion
         self.prefix = None
-        self.set_topic(topic)
+        self.set_topic(pClass)
 
     def getInstance(self, topic=None):
         """

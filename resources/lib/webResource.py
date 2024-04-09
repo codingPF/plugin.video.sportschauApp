@@ -4,10 +4,9 @@ SPDX-License-Identifier: MIT
 """
 
 # pylint: disable=too-many-lines,line-too-long
-from resources.lib.appContext import AppContext
 #
+import resources.lib.main as Main
 import zlib
-#
 from contextlib import closing
 #
 try:
@@ -36,17 +35,14 @@ class WebResource(object):
 
     """
 
-    def __init__(self, pUrl, pHeader = None, pAbortHook = None, pProgressListener = None, pChunkSize=8192, pTimeout=10):
-        self.logger = AppContext().LOGGER.getInstance('WebResource')
-        #
-        self.abortHook = pAbortHook if pAbortHook else lambda: False
-        #
-        self.progressListener = pProgressListener if pProgressListener else self._progressListener
+    def __init__(self, pAddon, pUrl, pHeader = None, pAbortHook = None, pProgressListener = None, pChunkSize=8192, pTimeout=10):
+        self.addon = pAddon
+        self.logger = pAddon.createLogger('WebResource')
+        self.abortHook = pAddon.getAbortHook()
+        self.progressListener = pAddon.getProgressDialog().updateProgress
         #
         self.connectionTimeout = pTimeout
-        #
         self.chunkSize = pChunkSize
-        #
         if pHeader == None:
             self.header = {
                 'Accept-Encoding':'gzip, deflate',

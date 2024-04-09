@@ -8,7 +8,6 @@ SPDX-License-Identifier: MIT
 import xbmcplugin
 import time
 import os
-from resources.lib.appContext import AppContext
 import resources.lib.utils as pyUtils
 import resources.lib.kodiUi as KodiUI
 from resources.lib.kodi import Kodi
@@ -21,8 +20,7 @@ class Main(Kodi):
 
     def __init__(self):
         super(Main, self).__init__()
-        self.logger = AppContext().LOGGER.getInstance('Main')
-        self.settings = AppContext().SETTINGS
+        self.logger = self.createLogger('Main')
 
     def run(self):
         #
@@ -32,14 +30,14 @@ class Main(Kodi):
         if mode == 'A':
             mmUI = KodiUI.KodiUI(self)
             href = self.getParameters('urlB64')
-            self.genSub(mmUI, dps.DpSportschau(self.getAbortHook()).getSub(pyUtils.b64decode(href)))
+            self.genSub(mmUI, dps.DpSportschau(self.getAbortHook(), self.getAddonDataPath(), self).getSub(pyUtils.b64decode(href)))
         elif mode == 'B':
             mmUI = KodiUI.KodiUI(self)
             href = self.getParameters('urlB64')
-            self.genSub(mmUI, dps.DpSportschau(self.getAbortHook()).getPage(pyUtils.b64decode(href)))
+            self.genSub(mmUI, dps.DpSportschau(self.getAbortHook(), self.getAddonDataPath(), self).getPage(pyUtils.b64decode(href)))
         else:
             mmUI = KodiUI.KodiUI(self)
-            self.genMenu(mmUI, dps.DpSportschau(self.getAbortHook()).getRoot())
+            self.genMenu(mmUI, dps.DpSportschau(self.getAbortHook(), self.getAddonDataPath(), self).getRoot())
         
 
     ##########

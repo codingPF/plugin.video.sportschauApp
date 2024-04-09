@@ -8,7 +8,6 @@ SPDX-License-Identifier: MIT
 import json
 import datetime
 import time
-from resources.lib.appContext import AppContext
 import resources.lib.utils as pyUtils
 import resources.lib.kodiProgressDialog as PG
 import resources.lib.webResource as WebResource
@@ -20,11 +19,12 @@ class DpSportschau(object):
     RefreshArdAudiothek
     """
 
-    def __init__(self, pAbortHook):
-        self.logger = AppContext().LOGGER.getInstance('DpSportschau')
-        self.settings = AppContext().SETTINGS
-        self.abortHook = pAbortHook        
-        self.kodiPG = None
+    def __init__(self, pAbortHook, pProfilePath, pAddon):
+        self._addon = pAddon
+        self.logger = pAddon.createLogger('DpSportschau')
+        self.abortHook = pAddon.getAbortHook()
+        self.profilePath = pAddon.getAddonDataPath()     
+        self.kodiPG = pAddon.getProgressDialog()
         self.starttime = time.time()
         #
         self.apiUrlMenu = 'https://exporte.wdr.de/SportschauNextServer/menu';
@@ -32,10 +32,10 @@ class DpSportschau(object):
 
     def _loadUrl(self, pUrl, pAge = 3600):
         self.logger.debug('load url {}', pUrl)
-        kkey = self.settings.getDatapath() + hashlib.md5(pUrl.encode()).hexdigest() + ".cache"
+        kkey = self.profilePath + hashlib.md5(pUrl.encode()).hexdigest() + ".cache"
         if pyUtils.file_exists(kkey):
             try:
-                self.logger.debug('cache read {}', kkey)
+                self.logger.debug('cache read {} on {}', kkey, self.profilePath)
                 cData = pyUtils.loadJson(kkey)
                 if cData.get('cTime') + pAge > int(time.time()):
                     self.logger.debug('cache read is valid')
@@ -43,7 +43,7 @@ class DpSportschau(object):
             except Exception as err:
                 self.logger.error('_loadUrl {}', err)
         self.logger.debug('cache build {}', kkey)
-        dn = WebResource.WebResource(pUrl, pProgressListener=self.kodiPG.updateProgress, pAbortHook=self.abortHook)
+        dn = WebResource.WebResource(self._addon, pUrl)
         dataString = dn.retrieveAsString()
         cData = { 'cTime': int(time.time()) , 'url' : pUrl, 'data' : pyUtils.b64encode( dataString.decode('utf-8')) }
         pyUtils.saveJson(kkey, cData)
@@ -53,8 +53,7 @@ class DpSportschau(object):
     def getRoot(self):
         self.logger.debug('getRoot')
         rs = []
-        self.kodiPG = PG.KodiProgressDialog()
-        self.kodiPG.create(30003)
+        self.kodiPG.create()
         try:
             url = self.apiUrlMenu
             self.logger.debug('url {}',url)
@@ -86,7 +85,6 @@ class DpSportschau(object):
     def getSub(self, pUrl):
         self.logger.debug('getSub')
         rs = []
-        self.kodiPG = PG.KodiProgressDialog()
         self.kodiPG.create(30003)
         try:
             self.logger.debug('url {}',pUrl)
@@ -165,8 +163,7 @@ class DpSportschau(object):
     def getPage(self, pUrl):
         self.logger.debug('getPage')
         rs = []
-        self.kodiPG = PG.KodiProgressDialog()
-        self.kodiPG.create(30003)
+        self.kodiPG.create()
         try:
             self.logger.debug('url {}',pUrl)
             data = json.loads(self._loadUrl(pUrl))

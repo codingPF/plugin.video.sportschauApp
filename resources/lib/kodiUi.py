@@ -9,7 +9,6 @@ import xbmcplugin
 import xbmcgui
 import xbmc
 import datetime
-from resources.lib.appContext import AppContext
 import resources.lib.utils as pyUtils
 
 class KodiUI(object):
@@ -18,9 +17,8 @@ class KodiUI(object):
     #
     ###########
     def __init__(self, pAddon, pContentType = 'video', pSortMethods = None, pCacheToDisc = False ):
-        self.logger = AppContext().LOGGER.getInstance('KodiUI')
-        self.setting = AppContext().SETTINGS
         self.addon = pAddon
+        self.logger = pAddon.createLogger('KodiUI')
         #
         self.allSortMethods = [
             xbmcplugin.SORT_METHOD_UNSORTED,
@@ -158,17 +156,17 @@ class KodiUI(object):
     def render(self):
         #
         for method in self.allSortMethods:
-            xbmcplugin.addSortMethod(self.addon.addon_handle, method)
+            xbmcplugin.addSortMethod(self.addon.getAddonHandle(), method)
         #
-        xbmcplugin.setContent(self.addon.addon_handle, self.contentType)
+        xbmcplugin.setContent(self.addon.getAddonHandle(), self.contentType)
         #
         xbmcplugin.addDirectoryItems(
-            handle=self.addon.addon_handle,
+            handle=self.addon.getAddonHandle(),
             items=self.listItems,
             totalItems=len(self.listItems)
         )
         #
-        xbmcplugin.endOfDirectory(self.addon.addon_handle, cacheToDisc=self.cacheToDisc)
+        xbmcplugin.endOfDirectory(self.addon.getAddonHandle(), cacheToDisc=self.cacheToDisc)
         #
         self.logger.debug('generated {} item(s) in {} sec', len(self.listItems), round(time.time() - self.startTime, 4))
 

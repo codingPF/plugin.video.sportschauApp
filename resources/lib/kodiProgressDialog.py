@@ -6,22 +6,21 @@ SPDX-License-Identifier: MIT
 """
 import xbmcgui
 import xbmc
-from resources.lib.appContext import AppContext
 
 
 class KodiProgressDialog(object):
     """ Kodi Progress Dialog Class """
 
-    def __init__(self):
-        self.logger = AppContext().LOGGER.getInstance('KodiProgressDialog')
-        self.language = AppContext().ADDONCLASS.getLocalizedString
+    def __init__(self, pAddon):
+        self._addon = pAddon
+        self.logger = pAddon.createLogger('KodiProgressDialog')
         self.pgdialog = None
         self.lastProgress = 0
 
     def __del__(self):
         self.close()
 
-    def create(self, heading=None, message=None):
+    def create(self, heading=30003, message=None):
         """
         Shows a progress dialog to the user
 
@@ -32,8 +31,8 @@ class KodiProgressDialog(object):
             message(str|int): Text of the progress dialog.
                 Can be a string or a numerical id to a localized text.
         """
-        heading = self.language(heading) if isinstance(heading, int) else heading
-        message = self.language(message) if isinstance(message, int) else message
+        heading = self._addon.localizeString(heading) if isinstance(heading, int) else heading
+        message = self._addon.localizeString(message) if isinstance(message, int) else message
         if self.pgdialog is None:
             self.pgdialog = xbmcgui.DialogProgressBG()
             self.pgdialog.create(heading, message)
@@ -55,8 +54,8 @@ class KodiProgressDialog(object):
                 Can be a string or a numerical id to a localized text.
         """
         if self.pgdialog is not None:
-            heading = self.language(heading) if isinstance(heading, int) else heading
-            message = self.language(message) if isinstance(message, int) else message
+            heading = self._addon.localizeString(heading) if isinstance(heading, int) else heading
+            message = self._addon.localizeString(message) if isinstance(message, int) else message
             if self.lastProgress+9 < percent:
                 self.pgdialog.update(percent, heading, message)
                 self.lastProgress = percent
@@ -73,7 +72,7 @@ class KodiProgressDialog(object):
             self.pgdialog = None
 
     def startBussyDialog(self):
-        xbmc.executebuiltin("ActivateWindow(busydialog)")
+        self._addon.executebuiltin("ActivateWindow(busydialog)")
 
     def stopBussyDialog(self):
-        xbmc.executebuiltin("Dialog.Close(busydialog)")
+        self._addon.executebuiltin("Dialog.Close(busydialog)")
