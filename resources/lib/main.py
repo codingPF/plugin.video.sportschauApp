@@ -59,7 +59,7 @@ class Main(Kodi):
         pUI.render()
 
     def genSub(self, pUI, pData):
-        uData= self._uniqueEntries(pData)
+        uData = pyUtils.makeDictUnique(pData)
         for element in uData:
             #
             self.logger.info('genSub {}', element)
@@ -91,22 +91,3 @@ class Main(Kodi):
         #
         pUI.render()
 
-
-
-
-
-
-
-
-    def _uniqueEntries(self, pEntries, pAttribute = "name"):
-        unique_dict = {}
-        for item in pEntries:
-            name = item[pAttribute]
-            if name not in unique_dict:
-                unique_dict[name] = item
-        unique_array = list(unique_dict.values())
-        return unique_array
-
-
-
-    

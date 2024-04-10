@@ -5,7 +5,6 @@ SPDX-License-Identifier: MIT
 
 # pylint: disable=too-many-lines,line-too-long
 #
-import resources.lib.main as Main
 import zlib
 from contextlib import closing
 #

@@ -6,10 +6,8 @@ SPDX-License-Identifier: MIT
 
 # pylint: disable=too-many-lines,line-too-long
 import json
-import datetime
 import time
 import resources.lib.utils as pyUtils
-import resources.lib.kodiProgressDialog as PG
 import resources.lib.webResource as WebResource
 import hashlib
 import xml.etree.ElementTree as ET
@@ -45,10 +43,10 @@ class DpSportschau(object):
         self.logger.debug('cache build {}', kkey)
         dn = WebResource.WebResource(self._addon, pUrl)
         dataString = dn.retrieveAsString()
-        cData = { 'cTime': int(time.time()) , 'url' : pUrl, 'data' : pyUtils.b64encode( dataString.decode('utf-8')) }
+        cData = { 'cTime': int(time.time()) , 'url' : pUrl, 'data' : dataString }
         pyUtils.saveJson(kkey, cData)
         self.logger.debug('cache write {}', kkey)
-        return pyUtils.b64decode(cData.get('data'))
+        return cData.get('data')
 
     def getRoot(self):
         self.logger.debug('getRoot')
@@ -65,6 +63,7 @@ class DpSportschau(object):
                     rs.append(self._processItem(item))
         except Exception as err:
             self.logger.error('getRoot {}', err)
+            self.kodiPG.close()
             raise
         self.kodiPG.close()
         return rs
@@ -99,6 +98,7 @@ class DpSportschau(object):
             
         except Exception as err:
             self.logger.error('getSub {}', err)
+            self.kodiPG.close()
             raise
         self.kodiPG.close()
         return rs
@@ -179,6 +179,7 @@ class DpSportschau(object):
             
         except Exception as err:
             self.logger.error('getPage {}', err)
+            self.kodiPG.close()
             raise
         self.kodiPG.close()
         return rs
