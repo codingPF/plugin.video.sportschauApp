@@ -43,10 +43,10 @@ class DpSportschau(object):
         self.logger.debug('cache build {}', kkey)
         dn = WebResource.WebResource(self._addon, pUrl)
         dataString = dn.retrieveAsString()
-        cData = { 'cTime': int(time.time()) , 'url' : pUrl, 'data' : dataString }
+        cData = { 'cTime': int(time.time()) , 'url' : pUrl, 'data' : pyUtils.b64encode(dataString) }
         pyUtils.saveJson(kkey, cData)
         self.logger.debug('cache write {}', kkey)
-        return cData.get('data')
+        return pyUtils.b64decode(cData.get('data'))
 
     def getRoot(self):
         self.logger.debug('getRoot')
