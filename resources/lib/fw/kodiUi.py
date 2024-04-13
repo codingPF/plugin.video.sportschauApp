@@ -9,7 +9,7 @@ import xbmcplugin
 import xbmcgui
 import xbmc
 import datetime
-import resources.lib.utils as pyUtils
+import resources.lib.fw.utils as pyUtils
 
 class KodiUI(object):
 

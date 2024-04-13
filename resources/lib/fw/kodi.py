@@ -18,11 +18,11 @@ except ImportError:
     # Python 2.x
     from urllib import urlencode
     from urlparse import parse_qs
-
-from resources.lib.singleton import Singleton
-from resources.lib.logger import Logger
-import resources.lib.utils as pyUtils
-import resources.lib.kodiProgressDialog as PG
+    
+from resources.lib.fw.singleton import Singleton
+from resources.lib.fw.logger import Logger
+import resources.lib.fw.utils as pyUtils
+import resources.lib.fw.kodiProgressDialog as PG
 
 class Kodi(Singleton):
 
@@ -136,6 +136,7 @@ class Kodi(Singleton):
 
         xbmcplugin.setResolvedUrl(self._addon_handle, True, listitem)
 
+    ## skin stuff
     def getSkinName(self):
         return xbmc.getSkinDir();
 

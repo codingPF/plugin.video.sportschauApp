@@ -7,7 +7,6 @@ SPDX-License-Identifier: MIT
 """
 
 # -- Imports ------------------------------------------------
-import xbmcaddon
 import resources.lib.main as Main
 
 # -- Main Code ----------------------------------------------

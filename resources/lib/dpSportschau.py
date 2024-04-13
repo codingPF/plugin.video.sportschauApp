@@ -7,8 +7,8 @@ SPDX-License-Identifier: MIT
 # pylint: disable=too-many-lines,line-too-long
 import json
 import time
-import resources.lib.utils as pyUtils
-import resources.lib.webResource as WebResource
+import resources.lib.fw.utils as pyUtils
+import resources.lib.fw.webResource as WebResource
 import hashlib
 import xml.etree.ElementTree as ET
 

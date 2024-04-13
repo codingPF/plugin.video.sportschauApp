@@ -4,7 +4,7 @@
 The logger module
 
 """
-import resources.lib.utils as pyUtils
+import resources.lib.fw.utils as pyUtils
 import xbmc
 
 
