@@ -8,14 +8,10 @@ SPDX-License-Identifier: MIT
 import xbmcplugin
 import time
 import os
-
-
-
 from ckfw import utils as pyUtils
 from ckfw import kodiUi as KodiUI
 from ckfw.kodi import Kodi
 from ckfw import kodiProgressDialog as PG
-
 from . import dpSportschau as dps
 
 #
