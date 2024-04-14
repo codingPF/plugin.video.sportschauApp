@@ -63,7 +63,7 @@ class Main(Kodi):
         uData = pyUtils.makeDictUnique(pData)
         for element in uData:
             #
-            self.logger.info('genSub {}', element)
+            #self.logger.info('genSub {}', element)
             name = element['name']
             if "topTitle" in element and element["topTitle"] != None:
                 name = "(" + element["topTitle"] + ") " + name

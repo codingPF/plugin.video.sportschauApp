@@ -78,7 +78,7 @@ class DpSportschau(object):
             'type': pyUtils.extractJsonValue(pItem, '_links', 'target', 'type'),
             'href': pyUtils.extractJsonValue(pItem, '_links', 'target', 'href')
             }
-        self.logger.debug('_processItem {}',rs)
+        #self.logger.debug('_processItem {}',rs)
         return rs
 
     def getSub(self, pUrl):
@@ -109,7 +109,7 @@ class DpSportschau(object):
             'type': 'C',#pyUtils.extractJsonValue(pItem, 'type'),
             'href': pyUtils.extractJsonValue(pItem, 'href')
             }
-        self.logger.debug('_processSubcategory {}',rs)
+        #self.logger.debug('_processSubcategory {}',rs)
         return rs
 
     def _processTeaser(self, pItem):
@@ -126,7 +126,7 @@ class DpSportschau(object):
             #'href': pyUtils.extractJsonValue(jsonVideoElement, 'streams', 0, 'media', 0, 'url')
             'href': self._extractVideo(jsonVideoElement)
             }
-        self.logger.debug('_processTeaser {}',rs)
+        #self.logger.debug('_processTeaser {}',rs)
         return rs
 
     def _processTopMediaType(self, pItem):
@@ -135,14 +135,6 @@ class DpSportschau(object):
         tree = ET.ElementTree(ET.fromstring(self._loadUrl(avLink)))
         ns = {'app' : 'http://www.wdr.de/rss/1.0/modules/app/1.0/' , 'mp' : 'http://www.wdr.de/rss/1.0/modules/mp' }
         root = tree.getroot()
-        
-        self.logger.debug('item title {}', tree.find('.//item/title').text)
-        self.logger.debug('item app:stand {}', tree.find('.//item/app:stand', ns).text)
-        #self.logger.debug('item description {}', tree.find('.//item/description').text)
-        #self.logger.debug('item duration {}', tree.find('.//item/app:duration', ns).text)
-        #self.logger.debug('item playerMediaCollection {}', tree.find('.//item/app:playerMediaCollection', ns).text)
-        self.logger.debug('item image {}', tree.find('.//item/mp:image/mp:data', ns).text)
-        
         jsonVideoElement = json.loads(tree.find('.//item/app:playerMediaCollection', ns).text)
         epoch = pyUtils.epoch_from_timestamp( tree.find('.//item/app:stand', ns).text, '%Y-%m-%dT%H:%M:%S %z')
         description = tree.find('.//item/description') or tree.find('.//channel/description')
@@ -157,7 +149,7 @@ class DpSportschau(object):
             #'href': pyUtils.extractJsonValue(jsonVideoElement, 'streams', 0, 'media', 0, 'url')
             'href': self._extractVideo(jsonVideoElement)
             }
-        self.logger.debug('_processTopMediaType {}',rs)
+        #self.logger.debug('_processTopMediaType {}',rs)
         return rs
     
     def getPage(self, pUrl):
@@ -188,18 +180,18 @@ class DpSportschau(object):
         rs = []
         topTitle = None
         if items:
-            self.logger.debug('items')
+            #self.logger.debug('items')
             for item in items:
-                self.logger.debug('item')
+                #self.logger.debug('item')
                 topTitle = pyUtils.extractJsonValue(item, 'title') or topTitle
                 teasers = pyUtils.extractJsonValue(item, 'teasers')
                 if teasers:
-                    self.logger.debug('teasers')
+                    #self.logger.debug('teasers')
                     for teaser in teasers:
                         dokumenttyp = pyUtils.extractJsonValue(teaser, 'dokumenttyp')
                         topMediaType = pyUtils.extractJsonValue(teaser, 'topMediaType')
                         mediaType = pyUtils.extractJsonValue(teaser, 'mediaCategory')
-                        self.logger.debug('teaser title: {} dokumenttyp: {} topMediaType: {}', topTitle, dokumenttyp, topMediaType)
+                        #self.logger.debug('teaser title: {} dokumenttyp: {} topMediaType: {}', topTitle, dokumenttyp, topMediaType)
                         try:
                             if dokumenttyp == 'video' or mediaType == 'video':
                                 tData = self._processTeaser(teaser)
@@ -223,5 +215,5 @@ class DpSportschau(object):
         
         sortedUrls = sorted(byResolution, key=lambda x: tuple(sorted(x.keys())))
         theOne = sortedUrls[0]['url']
-        self.logger.debug('_extractVideo: {} of {}', theOne, sortedUrls)
+        #self.logger.debug('_extractVideo: {} of {}', theOne, sortedUrls)
         return theOne
