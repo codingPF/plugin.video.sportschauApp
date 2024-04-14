@@ -19,6 +19,8 @@
         <description lang="en_GB">News from Sportschau</description>
         <news>
 v1.0.0 
+- fix imports
+v1.0.0 
 - build
 		</news>
         <platform>all</platform>
