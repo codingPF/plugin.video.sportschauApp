@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.sportschauApp"
     name="Sportschau App"
-    version="1.0.3"
+    version="1.0.4"
     provider-name="codingPF">
     <requires>
         <import addon="xbmc.python" version="3.0.0"/>
@@ -18,7 +18,7 @@
         <description lang="de_DE">Inhalte aus der Sportschau</description>
         <description lang="en_GB">News from Sportschau</description>
         <news>
-v1.0.0 , v1.0.1, v1.0.2, v1.0.3
+v1.0.0 , v1.0.1, v1.0.2, v1.0.3, v1.0.4
 - build
 		</news>
         <platform>all</platform>
